@@ -9,6 +9,7 @@ import Editor from '@monaco-editor/react';
 import ElapsedTimer from '@/components/ElapsedTimer';
 import { X, Code } from 'lucide-react';
 import Split from 'react-split';
+import LanguageDropdown from '@/components/LanguageDropdown';
 
 export default function ProblemSolve() {
   const { isSignedIn } = useAuth();
@@ -90,7 +91,11 @@ export default function ProblemSolve() {
             </div>
             <div className="h-64 flex flex-col  mt-4">
                 <div className="bg-gray-100 px-4 py-2 border-b font-semibold text-lg">
-                  {language}
+                  <LanguageDropdown
+                    languages={['C++', 'Java', 'Python', 'Js']}
+                    selected={language}
+                    onSelect={(lang) => setLanguage(lang)}
+                  />
                 </div>
               <Editor
                 height="100%"
@@ -130,7 +135,9 @@ export default function ProblemSolve() {
                     <div className="flex justify-between mb-4">
                       <div>
                         <h1 className="text-2xl font-bold">{question.title}</h1>
-                        <span
+                        
+                      </div>
+                      <span
                           className={`text-xs px-2 py-1 rounded font-semibold mt-1 inline-block ${
                             question.difficulty === 'Easy'
                               ? 'bg-green-100 text-green-700'
@@ -141,8 +148,6 @@ export default function ProblemSolve() {
                         >
                           {question.difficulty}
                         </span>
-                      </div>
-                      <ElapsedTimer onTick={(val) => setElapsedTime(val)} />
                     </div>
 
                     <div className="text-sm text-gray-600 mb-4">
@@ -171,18 +176,26 @@ export default function ProblemSolve() {
               </div>
 
               {/* RIGHT: Editor */}
-              <div className="flex flex-col bg-white shadow rounded overflow-hidden">
-                <div className="bg-gray-100 px-4 py-2 border-b font-semibold">
-                  {language}
+                <div className="flex flex-col bg-white shadow rounded overflow-hidden">
+                  {/* Top bar: LanguageDropdown and Timer */}
+                  <div className="flex justify-between items-center bg-gray-100 px-4 py-2 border-b font-semibold">
+                    <LanguageDropdown
+                      languages={['C++', 'Java', 'Python', 'Js']}
+                      selected={language}
+                      onSelect={(lang) => setLanguage(lang)}
+                    />
+                    <ElapsedTimer onTick={(val) => setElapsedTime(val)} />
+                  </div>
+
+                  {/* Code Editor */}
+                  <Editor
+                    height="100%"
+                    defaultLanguage="javascript"
+                    theme="vs-dark"
+                    value={code}
+                    onChange={(value) => setCode(value ?? '')}
+                  />
                 </div>
-                <Editor
-                  height="100%"
-                  defaultLanguage="javascript"
-                  theme="vs-dark"
-                  value={code}
-                  onChange={(value) => setCode(value ?? '')}
-                />
-              </div>
             </Split>
           </div>
         </>
@@ -192,7 +205,14 @@ export default function ProblemSolve() {
       {showEditor && (
         <div className="absolute inset-0 z-50 bg-white flex flex-col shadow-lg">
           <div className="flex justify-between items-center bg-gray-100 px-4 py-2 border-b">
-            <span className="font-semibold">{language}</span>
+            <span className="font-semibold">
+                  <LanguageDropdown
+                    languages={['C++', 'Java', 'Python', 'Js']}
+                    selected={language}
+                    onSelect={(lang) => setLanguage(lang)}
+                  />
+
+            </span>
             <button
               onClick={() => {
               setShowEditor(false);
