@@ -10,6 +10,7 @@ import ElapsedTimer from '@/components/ElapsedTimer';
 import { X, Code } from 'lucide-react';
 import Split from 'react-split';
 import LanguageDropdown from '@/components/LanguageDropdown';
+import getLangKey from '@/util/LanguageMap';
 
 export default function ProblemSolve() {
   const { isSignedIn } = useAuth();
@@ -26,7 +27,6 @@ export default function ProblemSolve() {
 
   const storageKey = `code-${param}-${language}`;
 
-  // Redirect unauthenticated users
   useEffect(() => {
     if (!isSignedIn) router.push('/sign-in');
   }, [isSignedIn]);
@@ -47,8 +47,9 @@ export default function ProblemSolve() {
   // Load saved code when language or question changes
   useEffect(() => {
     const savedCode = localStorage.getItem(storageKey);
-    setCode(savedCode || '// Write your code here');
-  }, [storageKey]);
+    console.log("NNAA",JSON.stringify(question))
+    setCode(savedCode || question?.code?.[getLangKey(language)]?.boilerplate || '// Write your code here');
+  }, [storageKey, question, language]);
 
   // Auto-save code every 5 seconds
   useEffect(() => {
@@ -59,6 +60,8 @@ export default function ProblemSolve() {
   }, [code, storageKey]);
 
   if (!isSignedIn) return null;
+
+  /* <- Now the main logic starts-> */
 
   const editorTopBar = (
     <div className="flex justify-between items-center bg-gray-100 px-4 py-2 border-b font-semibold">
@@ -118,13 +121,19 @@ export default function ProblemSolve() {
             </div>
             <div className="h-64 flex flex-col mt-4">
               {editorTopBar}
-              <Editor
-                height="100%"
-                defaultLanguage="javascript"
-                theme="vs-dark"
-                value={code}
-                onChange={(value) => setCode(value ?? '')}
-              />
+                <Editor
+                  height="100%"
+                  defaultLanguage="javascript"
+                  theme="vs-dark"
+                  value={code}
+                  onChange={(value) => setCode(value ?? '')}
+                  beforeMount={(monaco) => {
+                    monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+                      noSemanticValidation: true,
+                      noSyntaxValidation: true,
+                    });
+                  }}
+                />
             </div>
           </div>
 
@@ -201,6 +210,12 @@ export default function ProblemSolve() {
                   theme="vs-dark"
                   value={code}
                   onChange={(value) => setCode(value ?? '')}
+                  beforeMount={(monaco) => {
+                    monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+                      noSemanticValidation: true,
+                      noSyntaxValidation: true,
+                    });
+                  }}
                 />
               </div>
             </Split>
@@ -234,6 +249,12 @@ export default function ProblemSolve() {
             theme="vs-dark"
             value={code}
             onChange={(value) => setCode(value ?? '')}
+            beforeMount={(monaco) => {
+              monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+                noSemanticValidation: true,
+                noSyntaxValidation: true,
+              });
+            }}
           />
         </div>
       )}
