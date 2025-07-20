@@ -10,7 +10,7 @@ const Home = () => {
       <Navbar />
       <main className="min-h-screen flex items-center justify-center bg-white text-black px-4">
         <div className="text-center max-w-2xl">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">Welcome to LeetCode</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-6">Welcome to DevClash</h1>
           <p className="text-lg md:text-xl text-gray-700 mb-8">
             Sharpen your coding skills with problems and contests inspired by LeetCode and Codeforces.
           </p>
